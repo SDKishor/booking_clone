@@ -5,8 +5,7 @@ import { Home } from "./pages/Home";
 
 function App() {
   return (
-    <div className="App">
-      <Header></Header>
+    <div className="w-full flex flex-col items-center ">
       <Routes>
         <Route path="/" element={<Home></Home>} />
       </Routes>
