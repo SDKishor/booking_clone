@@ -11,9 +11,10 @@ import {
   FaPlane,
   FaTaxi,
 } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export const Header = ({ homepage = false }) => {
+  const [destination, setDestination] = useState("");
   const [date, setDate] = useState([
     {
       startDate: new Date(),
@@ -40,9 +41,14 @@ export const Header = ({ homepage = false }) => {
       };
     });
   };
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    navigate("list", { state: { destination, date, searchOption } });
+  };
 
   return (
-    <header className="w-full flex flex-col items-center py-8 bg-primary text-base-100/90 relative pb-16">
+    <header className="w-full flex flex-col items-center py-8 bg-primary text-base-100/90 relative ">
       <nav className="flex w-[1200px] justify-between items-center pb-5">
         <div className="text-2xl font-bold">Booking Clone</div>
         <div className=" flex items-center text-primary">
@@ -118,7 +124,7 @@ export const Header = ({ homepage = false }) => {
 
       {homepage && (
         <>
-          <div className="w-[1200px] pt-5">
+          <div className="w-[1200px] pt-5 pb-16">
             <h2 className="text-4xl font-bold py-3">
               A lifetime of discount? it's Genius
             </h2>
@@ -138,6 +144,7 @@ export const Header = ({ homepage = false }) => {
                 type="text"
                 placeholder="Where are you going?"
                 className="input pl-3 h-5/6 w-10/12 text-black"
+                onChange={() => setDestination(e.target.value)}
               />
             </div>
             <div className="flex items-center pr-5 w-[300px]">
@@ -252,7 +259,12 @@ export const Header = ({ homepage = false }) => {
                 </div>
               )}
             </div>
-            <button className="btn btn-secondary ml-10">search</button>
+            <button
+              className="btn btn-secondary ml-10"
+              onClick={() => handleSearch()}
+            >
+              search
+            </button>
           </div>
         </>
       )}
