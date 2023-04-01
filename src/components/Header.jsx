@@ -48,7 +48,6 @@ export const Header = ({ homepage = false }) => {
   const { dispatch } = useContext(SearchContext);
   const { user, dispatch: authDispatch } = useContext(AuthContext);
 
-  console.log(user);
   const navigate = useNavigate();
 
   const handleSearch = () => {
@@ -156,22 +155,26 @@ export const Header = ({ homepage = false }) => {
         </NavLink>
       </div>
 
-      {homepage && !user && (
+      {homepage && (
         <>
           <div className="w-[1200px] pt-5 pb-16">
-            <h2 className="text-4xl font-bold py-3">
-              A lifetime of discount? it's Genius
-            </h2>
-            <p className="text-2xl pb-3 pt-0 ">
-              Get rewarded for your travels - unlock instant savings of 10% or
-              more with a free account
-            </p>
-            <button
-              onClick={() => navigate("/login")}
-              className="btn btn-secondary  px-5 my-3"
-            >
-              sign in / Register
-            </button>
+            {!user && (
+              <>
+                <h2 className="text-4xl font-bold py-3">
+                  A lifetime of discount? it's Genius
+                </h2>
+                <p className="text-2xl pb-3 pt-0 ">
+                  Get rewarded for your travels - unlock instant savings of 10%
+                  or more with a free account
+                </p>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="btn btn-secondary  px-5 my-3"
+                >
+                  sign in / Register
+                </button>
+              </>
+            )}
           </div>
 
           <div className="flex bg-base-100 px-10 py-4 rounded-md text-gray-400 absolute bottom-[-45px] border-solid border-[5px] border-yellow-400 ">

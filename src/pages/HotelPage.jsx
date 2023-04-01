@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaLocationArrow } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
@@ -7,6 +7,7 @@ import { SearchContext } from "../context/SearchContext";
 import { AuthContext } from "../context/AuthContext";
 
 export const HotelPage = () => {
+  const [openModal, setOpenModal] = useState(false);
   const photos = [
     {
       src: "https://cf.bstatic.com/xdata/images/hotel/max1280x900/261707778.jpg?k=56ba0babbcbbfeb3d3e911728831dcbc390ed2cb16c51d88159f82bf751d04c6&o=&hp=1",
@@ -44,7 +45,6 @@ export const HotelPage = () => {
     const diffDays = Math.ceil(timeDiff / MILLISECOND_PER_DAY);
     return diffDays;
   }
-
   const days = dayDiff(date[0].startDate, date[0].endDate);
 
   const handleBooking = () => {
@@ -56,7 +56,10 @@ export const HotelPage = () => {
 
   return (
     <main className="w-[1200px] relative">
-      <button className="absolute top-[20px] right-0 bg-secondary font-bold px-5 py-3 rounded text-base-100/80 ">
+      <button
+        onClick={() => setOpenModal(!openModal)}
+        className="absolute top-[20px] right-0 bg-secondary font-bold px-5 py-3 rounded text-base-100/80 "
+      >
         Reserve or Book Now!
       </button>
       <h1 className="mt-5 text-3xl font-bold">{data.name}</h1>
@@ -92,7 +95,7 @@ export const HotelPage = () => {
             location score of 9.8!
           </div>
           <h2 className="text-2xl py-5">
-            <b>${days * data.cheapestPrice * searchOption.rooms}</b> ({days}{" "}
+            <b>${days * data.cheapestPrice * searchOption.rooms}</b> ({days}
             nights)
           </h2>
           <button
