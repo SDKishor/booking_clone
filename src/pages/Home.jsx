@@ -1,6 +1,4 @@
 import React from "react";
-import { PropertyCard } from "../components/PropertyCard";
-import { GuestChoiceCard } from "../components/GuestChoiceCard";
 import { Featured } from "../components/Featured";
 import { PropertyList } from "../components/PropertyList";
 import { FeaturedProperty } from "../components/FeaturedProperty";

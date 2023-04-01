@@ -12,6 +12,9 @@ import {
   FaTaxi,
 } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { SearchContext } from "../context/SearchContext";
+import { AuthContext } from "../context/AuthContext";
 
 export const Header = ({ homepage = false }) => {
   const [destination, setDestination] = useState("");
@@ -41,24 +44,55 @@ export const Header = ({ homepage = false }) => {
       };
     });
   };
+
+  const { dispatch } = useContext(SearchContext);
+  const { user, dispatch: authDispatch } = useContext(AuthContext);
+
+  console.log(user);
   const navigate = useNavigate();
 
   const handleSearch = () => {
+    dispatch({
+      type: "NEW_SEARCH",
+      payload: { destination, date, searchOption },
+    });
     navigate("list", { state: { destination, date, searchOption } });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    authDispatch({ type: "LOGOUT" });
   };
 
   return (
     <header className="w-full flex flex-col items-center py-8 bg-primary text-base-100/90 relative ">
       <nav className="flex w-[1200px] justify-between items-center pb-5">
         <div className="text-2xl font-bold">Booking Clone</div>
-        <div className=" flex items-center text-primary">
-          <button className="bg-base-100/90 px-5 py-2 mr-5 rounded-sm cursor-pointer">
-            Register
-          </button>
-          <button className="bg-base-100/90 px-5 py-2 mr-5 rounded-sm cursor-pointer">
-            Login
-          </button>
-        </div>
+        {!user ? (
+          <div className=" flex items-center text-primary">
+            <button
+              onClick={() => navigate("register")}
+              className="bg-base-100/90 px-5 py-2 mr-5 rounded-sm cursor-pointer"
+            >
+              Register
+            </button>
+            <button
+              onClick={() => navigate("login")}
+              className="bg-base-100/90 px-5 py-2 mr-5 rounded-sm cursor-pointer"
+            >
+              Login
+            </button>
+          </div>
+        ) : (
+          <div className=" flex items-center text-primary">
+            <button
+              onClick={handleLogout}
+              className="bg-base-100/90 px-5 py-2 mr-5 rounded-sm cursor-pointer"
+            >
+              Log Out
+            </button>
+          </div>
+        )}
       </nav>
       <div className="flex w-[1200px] ">
         <NavLink
@@ -122,7 +156,7 @@ export const Header = ({ homepage = false }) => {
         </NavLink>
       </div>
 
-      {homepage && (
+      {homepage && !user && (
         <>
           <div className="w-[1200px] pt-5 pb-16">
             <h2 className="text-4xl font-bold py-3">
@@ -132,7 +166,10 @@ export const Header = ({ homepage = false }) => {
               Get rewarded for your travels - unlock instant savings of 10% or
               more with a free account
             </p>
-            <button className="btn btn-secondary  px-5 my-3">
+            <button
+              onClick={() => navigate("/login")}
+              className="btn btn-secondary  px-5 my-3"
+            >
               sign in / Register
             </button>
           </div>
@@ -144,7 +181,7 @@ export const Header = ({ homepage = false }) => {
                 type="text"
                 placeholder="Where are you going?"
                 className="input pl-3 h-5/6 w-10/12 text-black"
-                onChange={() => setDestination(e.target.value)}
+                onChange={(e) => setDestination(e.target.value)}
               />
             </div>
             <div className="flex items-center pr-5 w-[300px]">
@@ -163,7 +200,7 @@ export const Header = ({ homepage = false }) => {
 
               {showDateRange && (
                 <DateRange
-                  className="absolute top-[80px] "
+                  className="absolute top-[80px] z-10 "
                   editableDateInputs={true}
                   onChange={(item) => setDate([item.selection])}
                   moveRangeOnFirstSelection={false}
@@ -183,7 +220,7 @@ export const Header = ({ homepage = false }) => {
                 </span>
               </button>
               {ShowOptions && (
-                <div className="w-[300px] absolute top-[70px] mx-10 p-5 bg-black/5 rounded-md text-black">
+                <div className="w-[300px] absolute top-[70px] mx-10 p-5 bg-base-100 rounded-md text-black z-10">
                   <div className="flex justify-between items-center mb-5">
                     <div className="text-xl">Adult</div>
                     <div className="flex items-center justify-center w-2/4 h-10">

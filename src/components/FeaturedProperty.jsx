@@ -6,7 +6,6 @@ export const FeaturedProperty = () => {
   const { data, error, loading } = useFecth(
     "http://localhost:8800/hotels?Featured=true&limit=4"
   );
-  console.log(data);
   return loading ? (
     "Loading. Please wait."
   ) : (

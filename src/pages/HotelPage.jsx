@@ -1,5 +1,10 @@
 import React from "react";
 import { FaLocationArrow } from "react-icons/fa";
+import { useLocation, useNavigate } from "react-router-dom";
+import useFetch from "../hooks/useFetch";
+import { useContext } from "react";
+import { SearchContext } from "../context/SearchContext";
+import { AuthContext } from "../context/AuthContext";
 
 export const HotelPage = () => {
   const photos = [
@@ -22,21 +27,49 @@ export const HotelPage = () => {
       src: "https://cf.bstatic.com/xdata/images/hotel/max1280x900/261707389.jpg?k=52156673f9eb6d5d99d3eed9386491a0465ce6f3b995f005ac71abc192dd5827&o=&hp=1",
     },
   ];
+  const location = useLocation();
+  const hotelId = location.pathname.split("/")[2];
+  const { data, error, loading, reFetchData } = useFetch(
+    `http://localhost:8800/hotels/find/${hotelId}`
+  );
+
+  const { date, searchOption } = useContext(SearchContext);
+  const { user } = useContext(AuthContext);
+
+  const navigate = useNavigate();
+  const MILLISECOND_PER_DAY = 1000 * 60 * 60 * 24;
+
+  function dayDiff(date1, date2) {
+    const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+    const diffDays = Math.ceil(timeDiff / MILLISECOND_PER_DAY);
+    return diffDays;
+  }
+
+  const days = dayDiff(date[0].startDate, date[0].endDate);
+
+  const handleBooking = () => {
+    if (user) {
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <main className="w-[1200px] relative">
       <button className="absolute top-[20px] right-0 bg-secondary font-bold px-5 py-3 rounded text-base-100/80 ">
         Reserve or Book Now!
       </button>
-      <h1 className="mt-5 text-3xl font-bold">Tower Street Apartments</h1>
+      <h1 className="mt-5 text-3xl font-bold">{data.name}</h1>
       <div className="flex py-3">
         <FaLocationArrow />
-        <span className="px-3 ">Elton St 125 New york</span>
+        <span className="px-3 ">{data.address}</span>
       </div>
       <div className="text-xl font-bold pb-3 text-secondary">
-        Excellent location – 500m from center
+        Excellent location – {data.distance}m from center
       </div>
       <div className="text-green-600 font-bold mb-3">
-        Book a stay over $114 at this property and get a free airport taxi
+        Book a stay over ${data.cheapestPrice} at this property and get a free
+        airport taxi
       </div>
       <div className="flex flex-wrap justify-between gap-1 cursor-pointer">
         {photos.map((photo, i) => (
@@ -47,19 +80,8 @@ export const HotelPage = () => {
       </div>
       <div className="flex mt-8">
         <div className="w-3/4 ">
-          <h1 className="text-3xl font-bold pb-5">Stay in the heart of City</h1>
-          <p className="hotelDesc">
-            Located a 5-minute walk from St. Florian's Gate in Krakow, Tower
-            Street Apartments has accommodations with air conditioning and free
-            WiFi. The units come with hardwood floors and feature a fully
-            equipped kitchenette with a microwave, a flat-screen TV, and a
-            private bathroom with shower and a hairdryer. A fridge is also
-            offered, as well as an electric tea pot and a coffee machine.
-            Popular points of interest near the apartment include Cloth Hall,
-            Main Market Square and Town Hall Tower. The nearest airport is John
-            Paul II International Kraków–Balice, 16.1 km from Tower Street
-            Apartments, and the property offers a paid airport shuttle service.
-          </p>
+          <h1 className="text-3xl font-bold pb-5 capitalize">{data.title}</h1>
+          <p className="hotelDesc">{data.desc}</p>
         </div>
         <div className="bg-secondary/20 p-5 rounded  w-1/3 ml-10">
           <h1 className="font-bold text-xl pb-3">
@@ -70,9 +92,13 @@ export const HotelPage = () => {
             location score of 9.8!
           </div>
           <h2 className="text-2xl py-5">
-            <b>$945</b> (9 nights)
+            <b>${days * data.cheapestPrice * searchOption.rooms}</b> ({days}{" "}
+            nights)
           </h2>
-          <button className="bg-secondary w-full py-3 font-bold text-base-100/90 rounded">
+          <button
+            className="bg-secondary w-full py-3 font-bold text-base-100/90 rounded"
+            onClick={handleBooking}
+          >
             Reserve or Book Now!
           </button>
         </div>
